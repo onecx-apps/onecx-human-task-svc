@@ -1,0 +1,7 @@
+include::onecx-human-task-svc-attributes.adoc[opts=optional]
+
+= onecx-human-task-svc
+
+
+
+include::onecx-human-task-svc-docs.adoc[opts=optional]

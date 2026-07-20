@@ -1,0 +1,55 @@
+openapi: 3.0.3
+info:
+  title: onecx-human-task-svc API
+  version: 1.0.0
+
+servers:
+  - url: http://onecx-human-task-svc:8080/api
+
+paths: {}
+
+components:
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://oauth.simple.api/token
+          scopes:
+            "ocx-human-task:all": Grants access to all operations
+            "ocx-human-task:read": Grants read access
+            "ocx-human-task:write": Grants write access
+            "ocx-human-task:delete": Grants access to delete operations
+
+  schemas:
+    ProblemDetailParam:
+      type: object
+      properties:
+        key:
+          type: string
+        value:
+          type: string
+
+    ProblemDetailInvalidParam:
+      type: object
+      properties:
+        name:
+          type: string
+        message:
+          type: string
+
+    ProblemDetailResponse:
+      type: object
+      properties:
+        errorCode:
+          type: string
+        detail:
+          type: string
+        params:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProblemDetailParam'
+        invalidParams:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProblemDetailInvalidParam'

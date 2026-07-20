@@ -1,0 +1,68 @@
+
+include::onecx-human-task-svc-attributes.adoc[opts=optional]
+
+{docker-registry}[Link to Docker registry]
+
+== Default properties
+
+.{properties-file}
+[%collapsible]
+====
+[source,properties,subs=attributes+]
+----
+quarkus.banner.enabled=false
+quarkus.hibernate-orm.database.generation=validate
+quarkus.hibernate-orm.metrics.enabled=true
+quarkus.hibernate-orm.jdbc.timezone=UTC
+quarkus.datasource.db-kind=postgresql
+quarkus.datasource.jdbc.max-size=30
+quarkus.datasource.jdbc.min-size=10
+quarkus.datasource.metrics.enabled=true
+%prod.quarkus.oidc-client.client-id=${quarkus.application.name}
+%prod.quarkus.datasource.jdbc.url=${DB_URL:jdbc:postgresql://postgresdb:5432/onecx_human_task_svc?sslmode=disable}
+%prod.quarkus.datasource.username=${DB_USER:onecx-human-task-svc}
+%prod.quarkus.datasource.password=${DB_PWD:onecx-human-task-svc}
+quarkus.liquibase.migrate-at-start=true
+quarkus.liquibase.validate-on-migrate=true
+quarkus.http.auth.permission.health.paths=/q/*
+quarkus.http.auth.permission.health.policy=permit
+quarkus.http.auth.permission.default.paths=/*
+quarkus.http.auth.permission.default.policy=authenticated
+quarkus.hibernate-orm.multitenant=DISCRIMINATOR
+tkit.rs.context.tenant-id.enabled=true
+tkit.rs.context.token.header-param=apm-principal-token
+----
+====
+
+== Extensions
+.Extensions List
+[%collapsible]
+====
+include::onecx-human-task-svc-extensions.adoc[opts=optional]
+====
+
+== Helm
+
+{helm-registry}[Link to Helm registry]
+
+.Default values in {helm-file}
+[source,yaml]
+----
+app:
+  name: svc
+  image:
+    repository: "onecx/onecx-human-task-svc"
+  db:
+    enabled: true
+  operator:
+    keycloak:
+      client:
+        enabled: true
+        spec:
+          kcConfig:
+            defaultClientScopes: [ ocx-human-task:read ]
+    microservice:
+      spec:
+        description: "OneCX backend service"
+        name: "onecx-human-task-svc"
+----
