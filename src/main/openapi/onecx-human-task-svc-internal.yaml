@@ -1,12 +1,162 @@
 openapi: 3.0.3
 info:
-  title: onecx-human-task-svc API
+  title: onecx-human-task internal service
+  description: Internal API for the Human Task Service. Used by the BFF to search tasks, retrieve task details, and perform approve/decline actions with optional custom input.
   version: 1.0.0
 
 servers:
-  - url: http://onecx-human-task-svc:8080/api
+  - url: "http://onecx-human-task-svc:8080"
 
-paths: {}
+tags:
+  - name: tasksInternal
+    description: Managing human tasks
+
+paths:
+  /internal/tasks/{id}:
+    get:
+      security:
+        - oauth2: [ ocx-human-task:all, ocx-human-task:read ]
+      tags:
+        - tasksInternal
+      description: Get a task by its id
+      operationId: getTaskById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Task retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        404:
+          description: Task not found
+    delete:
+      security:
+        - oauth2: [ ocx-human-task:all, ocx-human-task:delete ]
+      tags:
+        - tasksInternal
+      description: Delete a task by its id
+      operationId: deleteTask
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        204:
+          description: Task deleted successfully
+        404:
+          description: Task not found
+
+  /internal/tasks/{id}/approve:
+    post:
+      security:
+        - oauth2: [ ocx-human-task:all, ocx-human-task:write ]
+      tags:
+        - tasksInternal
+      description: Approve a task, with optional custom input forwarded to the provider
+      operationId: approveTask
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApproveTaskRequest'
+      responses:
+        200:
+          description: Task approved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
+        404:
+          description: Task not found
+        409:
+          description: Task already completed or modificationCount mismatch
+
+  /internal/tasks/{id}/decline:
+    post:
+      security:
+        - oauth2: [ ocx-human-task:all, ocx-human-task:write ]
+      tags:
+        - tasksInternal
+      description: Decline a task, with optional custom input forwarded to the provider
+      operationId: declineTask
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeclineTaskRequest'
+      responses:
+        200:
+          description: Task declined successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
+        404:
+          description: Task not found
+        409:
+          description: Task already declined or modificationCount mismatch
+
+  /internal/tasks/search:
+    post:
+      security:
+        - oauth2: [ ocx-human-task:all, ocx-human-task:read ]
+      tags:
+        - tasksInternal
+      description: Search for tasks by search criteria
+      operationId: searchTasks
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskSearchCriteria'
+      responses:
+        200:
+          description: Task search results retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskPageResult'
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
 
 components:
   securitySchemes:
@@ -16,27 +166,142 @@ components:
         clientCredentials:
           tokenUrl: https://oauth.simple.api/token
           scopes:
-            "ocx-human-task:all": Grants access to all operations
-            "ocx-human-task:read": Grants read access
-            "ocx-human-task:write": Grants write access
-            "ocx-human-task:delete": Grants access to delete operations
+            ocx-human-task:all: Grants access to all operations
+            ocx-human-task:read: Grants read access
+            ocx-human-task:write: Grants write access
+            ocx-human-task:delete: Grants access to delete operations
 
   schemas:
-    ProblemDetailParam:
+    TaskSearchCriteria:
       type: object
       properties:
-        key:
-          type: string
-        value:
-          type: string
+        status:
+          $ref: '#/components/schemas/TaskStatus'
+        adapterId:
+          $ref: '#/components/schemas/AdapterId'
+        pageNumber:
+          format: int32
+          description: The number of page.
+          default: 0
+          type: integer
+        pageSize:
+          format: int32
+          description: The size of page
+          default: 100
+          maximum: 1000
+          type: integer
 
-    ProblemDetailInvalidParam:
+    TaskPageResult:
       type: object
       properties:
-        name:
+        totalElements:
+          format: int64
+          description: The total elements in the resource.
+          type: integer
+        number:
+          format: int32
+          type: integer
+        size:
+          format: int32
+          type: integer
+        totalPages:
+          format: int64
+          type: integer
+        stream:
+          type: array
+          items:
+            $ref: '#/components/schemas/Task'
+
+    Task:
+      type: object
+      properties:
+        modificationCount:
+          format: int32
+          type: integer
+        creationDate:
+          $ref: '#/components/schemas/OffsetDateTime'
+        creationUser:
           type: string
-        message:
+        modificationDate:
+          $ref: '#/components/schemas/OffsetDateTime'
+        modificationUser:
           type: string
+        id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        status:
+          $ref: '#/components/schemas/TaskStatus'
+        adapterId:
+          $ref: '#/components/schemas/AdapterId'
+        providerId:
+          type: string
+          description: Identifier of the specific provider instance
+        providerTaskId:
+          type: string
+          description: The task ID in the external provider system
+        businessKey:
+          type: string
+          description: Correlation key for the originating workflow, might be temporary solution
+        customInput:
+          type: object
+          additionalProperties:
+            type: string
+          description: Arbitrary key-value pairs provided by OneCx users during approval/rejection.
+        providerInput:
+          type: object
+          description: Arbitrary JSON pairs provided by the provider - might be temporary solution, as we need to know what the provider expects us to know in order to accept/reject a task.
+
+    ApproveTaskRequest:
+      required:
+        - modificationCount
+      type: object
+      properties:
+        modificationCount:
+          format: int32
+          type: integer
+          description: The modificationCount from the last GET request, used for optimistic locking
+        input:
+          type: object
+          additionalProperties:
+            type: string
+          description: Arbitrary key-value pairs forwarded to the provider as custom input
+
+    DeclineTaskRequest:
+      required:
+        - modificationCount
+      type: object
+      properties:
+        modificationCount:
+          format: int32
+          type: integer
+          description: The modificationCount from the last GET request, used for optimistic locking
+        input:
+          type: object
+          additionalProperties:
+            type: string
+          description: Arbitrary key-value pairs forwarded to the provider as custom input
+
+    TaskStatus:
+      type: string
+      enum:
+        - CREATED
+        - ACCEPTED
+        - DECLINED
+        - ABORTED
+
+    AdapterId:
+      type: string
+      enum:
+        - CAMUNDA
+        - N8N
+
+    OffsetDateTime:
+      format: date-time
+      type: string
+      example: 2022-03-10T12:15:50-04:00
 
     ProblemDetailResponse:
       type: object
@@ -53,3 +318,19 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ProblemDetailInvalidParam'
+
+    ProblemDetailParam:
+      type: object
+      properties:
+        key:
+          type: string
+        value:
+          type: string
+
+    ProblemDetailInvalidParam:
+      type: object
+      properties:
+        name:
+          type: string
+        message:
+          type: string
