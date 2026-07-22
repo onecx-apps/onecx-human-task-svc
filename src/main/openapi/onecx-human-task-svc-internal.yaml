@@ -173,8 +173,8 @@ components:
       properties:
         status:
           $ref: '#/components/schemas/TaskStatus'
-        adapterId:
-          $ref: '#/components/schemas/AdapterId'
+        orchestratorType:
+          $ref: '#/components/schemas/OrchestratorType'
         pageNumber:
           format: int32
           description: The number of page.
@@ -230,25 +230,19 @@ components:
           type: string
         status:
           $ref: '#/components/schemas/TaskStatus'
-        adapterId:
-          $ref: '#/components/schemas/AdapterId'
-        providerId:
-          type: string
-          description: Identifier of the specific provider instance
+        orchestratorType:
+          $ref: '#/components/schemas/OrchestratorType'
         providerTaskId:
           type: string
           description: The task ID in the external provider system
-        businessKey:
+        providerURL:
           type: string
-          description: Correlation key for the originating workflow, might be temporary solution
+          description: URL of the specific provider instance
         customInput:
           type: object
           additionalProperties:
             type: string
           description: Arbitrary key-value pairs provided by OneCx users during approval/rejection.
-        providerInput:
-          type: object
-          description: Arbitrary JSON pairs provided by the provider - might be temporary solution, as we need to know what the provider expects us to know in order to accept/reject a task.
 
     ApproveTaskRequest:
       required:
@@ -288,7 +282,7 @@ components:
         - DECLINED
         - ABORTED
 
-    AdapterId:
+    OrchestratorType:
       type: string
       enum:
         - CAMUNDA
