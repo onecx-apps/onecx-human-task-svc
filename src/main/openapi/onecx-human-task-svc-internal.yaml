@@ -173,8 +173,8 @@ components:
       properties:
         status:
           $ref: '#/components/schemas/TaskStatus'
-        orchestratorType:
-          $ref: '#/components/schemas/OrchestratorType'
+        providerType:
+          $ref: '#/components/schemas/ProviderType'
         pageNumber:
           format: int32
           description: The number of page.
@@ -230,8 +230,8 @@ components:
           type: string
         status:
           $ref: '#/components/schemas/TaskStatus'
-        orchestratorType:
-          $ref: '#/components/schemas/OrchestratorType'
+        providerType:
+          $ref: '#/components/schemas/ProviderType'
         providerTaskId:
           type: string
           description: The task ID in the external provider system
@@ -282,7 +282,7 @@ components:
         - DECLINED
         - ABORTED
 
-    OrchestratorType:
+    ProviderType:
       type: string
       enum:
         - CAMUNDA
