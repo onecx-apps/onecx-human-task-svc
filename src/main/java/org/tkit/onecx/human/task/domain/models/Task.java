@@ -4,16 +4,20 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.TenantId;
+import org.hibernate.type.SqlTypes;
 import org.tkit.quarkus.jpa.models.TraceableEntity;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
-@Entity
-@Table(name = "TASK")
 @Getter
 @Setter
+@EqualsAndHashCode(callSuper = true)
+@Entity
+@Table(name = "HT_TASK")
 public class Task extends TraceableEntity {
 
     @TenantId
@@ -26,17 +30,21 @@ public class Task extends TraceableEntity {
     @Column(name = "DESCRIPTION")
     private String description;
 
-    @Column(name = "STATUS")
+    @Column(name = "STATUS", nullable = false)
     private Status status;
 
-    @Column(name = "PROVIDER_TYPE")
+    @Column(name = "PROVIDER_TYPE", nullable = false)
     private ProviderType providerType;
 
-    @Column(name = "PROVIDER_TASK_ID")
+    @Column(name = "PROVIDER_TASK_ID", nullable = false)
     private String providerTaskId;
-    
-    @Column(name = "PROVIDER_URL")
+
+    @Column(name = "PROVIDER_URL", nullable = false)
     private String providerURL;
+
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "CUSTOM_INPUT", columnDefinition = "jsonb")
+    private java.util.Map<String, String> customInput;
 
     public enum Status {
         CREATED,

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+           http://www.liquibase.org/xml/ns/dbchangelog
+           https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet author="dev" id="1701429130534-1">
+        <createTable tableName="task">
+            <column name="optlock" type="INTEGER">
+                    <constraints nullable="false"/>
+            </column>
+            <column name="CREATIONUSER" type="VARCHAR(255)"/>
+            <column name="CREATIONDATE" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="MODIFICATIONDATE" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="MODIFICATIONUSER" type="VARCHAR(255)"/>
+            <column name="GUID" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="task_pkey"/>
+            </column>
+            <column name="TITLE" type="VARCHAR(255)"/>
+            <column name="DESCRIPTION" type="TEXT"/>
+            <column name="STATUS" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PROVIDER_TYPE" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PROVIDER_TASK_ID" type="VARCHAR(255)"/>
+            <column name="PROVIDER_URL" type="VARCHAR(512)"/>
+            <column name="CUSTOM_INPUT" type="JSONB"/>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

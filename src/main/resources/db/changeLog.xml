@@ -6,4 +6,5 @@
            http://www.liquibase.org/xml/ns/dbchangelog
            https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
+        <include relativeToChangelogFile="true" file="v1/2026-07-22-create-table.xml"/>
 </databaseChangeLog>
