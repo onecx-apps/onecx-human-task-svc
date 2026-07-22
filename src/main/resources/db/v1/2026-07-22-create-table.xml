@@ -9,6 +9,9 @@
 
     <changeSet author="dev" id="1701429130534-1">
         <createTable tableName="task">
+            <column name="tenant_id" type="varchar(255 BYTE)">
+                <constraints nullable="false"/>
+            </column>
             <column name="optlock" type="INTEGER">
                     <constraints nullable="false"/>
             </column>
@@ -27,8 +30,12 @@
             <column name="PROVIDER_TYPE" type="VARCHAR(20)">
                 <constraints nullable="false"/>
             </column>
-            <column name="PROVIDER_TASK_ID" type="VARCHAR(255)"/>
-            <column name="PROVIDER_URL" type="VARCHAR(512)"/>
+            <column name="PROVIDER_TASK_ID" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PROVIDER_URL" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
             <column name="CUSTOM_INPUT" type="JSONB"/>
         </createTable>
     </changeSet>

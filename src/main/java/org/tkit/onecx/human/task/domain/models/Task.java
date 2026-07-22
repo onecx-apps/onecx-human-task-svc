@@ -2,6 +2,8 @@ package org.tkit.onecx.human.task.domain.models;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Table;
 
 import org.hibernate.annotations.JdbcTypeCode;
@@ -17,7 +19,7 @@ import lombok.Setter;
 @Setter
 @EqualsAndHashCode(callSuper = true)
 @Entity
-@Table(name = "HT_TASK")
+@Table(name = "TASK")
 public class Task extends TraceableEntity {
 
     @TenantId
@@ -30,9 +32,11 @@ public class Task extends TraceableEntity {
     @Column(name = "DESCRIPTION")
     private String description;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "STATUS", nullable = false)
     private Status status;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "PROVIDER_TYPE", nullable = false)
     private ProviderType providerType;
 
