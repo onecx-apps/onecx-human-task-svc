@@ -15,7 +15,7 @@ paths:
   /internal/tasks/{id}:
     get:
       security:
-        - oauth2: [ ocx-human-task:all, ocx-human-task:read ]
+        - oauth2: [ ocx-ht:all, ocx-ht:read ]
       tags:
         - tasksInternal
       description: Get a task by its id
@@ -37,7 +37,7 @@ paths:
           description: Task not found
     delete:
       security:
-        - oauth2: [ ocx-human-task:all, ocx-human-task:delete ]
+        - oauth2: [ ocx-ht:all, ocx-ht:delete ]
       tags:
         - tasksInternal
       description: Delete a task by its id
@@ -57,7 +57,7 @@ paths:
   /internal/tasks/{id}/approve:
     post:
       security:
-        - oauth2: [ ocx-human-task:all, ocx-human-task:write ]
+        - oauth2: [ ocx-ht:all, ocx-ht:write ]
       tags:
         - tasksInternal
       description: Approve a task, with optional custom input forwarded to the provider
@@ -95,7 +95,7 @@ paths:
   /internal/tasks/{id}/decline:
     post:
       security:
-        - oauth2: [ ocx-human-task:all, ocx-human-task:write ]
+        - oauth2: [ ocx-ht:all, ocx-ht:write ]
       tags:
         - tasksInternal
       description: Decline a task, with optional custom input forwarded to the provider
@@ -133,7 +133,7 @@ paths:
   /internal/tasks/search:
     post:
       security:
-        - oauth2: [ ocx-human-task:all, ocx-human-task:read ]
+        - oauth2: [ ocx-ht:all, ocx-ht:read ]
       tags:
         - tasksInternal
       description: Search for tasks by search criteria
@@ -166,10 +166,10 @@ components:
         clientCredentials:
           tokenUrl: https://oauth.simple.api/token
           scopes:
-            ocx-human-task:all: Grants access to all operations
-            ocx-human-task:read: Grants read access
-            ocx-human-task:write: Grants write access
-            ocx-human-task:delete: Grants access to delete operations
+            ocx-ht:all: Grants access to all operations
+            ocx-ht:read: Grants read access
+            ocx-ht:write: Grants write access
+            ocx-ht:delete: Grants access to delete operations
 
   schemas:
     TaskSearchCriteria:
