@@ -20,7 +20,7 @@ import org.tkit.quarkus.jpa.models.AbstractTraceableEntity_;
 import org.tkit.quarkus.jpa.models.TraceableEntity_;
 
 @ApplicationScoped
-public class TaskDao extends AbstractDAO<Task> {
+public class TaskDAO extends AbstractDAO<Task> {
 
     @Override
     public Task findById(Object id) throws DAOException {
@@ -55,7 +55,7 @@ public class TaskDao extends AbstractDAO<Task> {
             }
 
             if (criteria.getProviderType() != null) {
-                predicates.add(root.get(Task_.PROVIDER_TYPE).in(criteria.getProviderType()));
+                predicates.add(cb.equal(root.get(Task_.PROVIDER_TYPE), criteria.getProviderType()));
             }
 
             if (!predicates.isEmpty()) {
