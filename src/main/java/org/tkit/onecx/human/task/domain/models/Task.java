@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Table;
+import java.util.Map;
 
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.TenantId;
@@ -46,7 +47,7 @@ public class Task extends TraceableEntity {
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "CUSTOM_INPUT", columnDefinition = "jsonb")
-    private java.util.Map<String, String> customInput;
+    private Map<String, String> customInput;
 
     public enum Status {
         CREATED,
