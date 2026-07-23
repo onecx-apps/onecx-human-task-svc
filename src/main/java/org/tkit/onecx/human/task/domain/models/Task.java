@@ -11,7 +11,6 @@ import org.hibernate.annotations.TenantId;
 import org.hibernate.type.SqlTypes;
 import org.tkit.quarkus.jpa.models.TraceableEntity;
 
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,6 +18,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "TASK")
+@SuppressWarnings("squid:S2160")
 public class Task extends TraceableEntity {
 
     @TenantId
@@ -46,17 +46,12 @@ public class Task extends TraceableEntity {
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "CUSTOM_INPUT", columnDefinition = "jsonb")
-    private Map<String, String> customInput;
+    private java.util.Map<String, String> customInput;
 
     public enum Status {
         CREATED,
         ACCEPTED,
         DECLINED,
         ABORTED
-    }
-
-    public enum ProviderType {
-        CAMUNDA,
-        N8N
     }
 }
