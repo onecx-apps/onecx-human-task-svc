@@ -17,7 +17,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "TASK")
 public class Task extends TraceableEntity {
@@ -36,9 +35,8 @@ public class Task extends TraceableEntity {
     @Column(name = "STATUS", nullable = false)
     private Status status;
 
-    @Enumerated(EnumType.STRING)
     @Column(name = "PROVIDER_TYPE", nullable = false)
-    private ProviderType providerType;
+    private String providerType;
 
     @Column(name = "PROVIDER_TASK_ID", nullable = false)
     private String providerTaskId;
@@ -48,7 +46,7 @@ public class Task extends TraceableEntity {
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "CUSTOM_INPUT", columnDefinition = "jsonb")
-    private java.util.Map<String, String> customInput;
+    private Map<String, String> customInput;
 
     public enum Status {
         CREATED,
