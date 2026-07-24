@@ -1,6 +1,5 @@
 package org.tkit.onecx.human.task.domain.models;
 
-import java.util.List;
 import java.util.Map;
 
 import jakarta.persistence.Column;

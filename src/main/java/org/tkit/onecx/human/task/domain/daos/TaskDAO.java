@@ -48,7 +48,7 @@ public class TaskDAO extends AbstractDAO<Task> {
             addSearchStringPredicate(predicates, cb, root.get(Task_.PROVIDER_TASK_ID), criteria.getProviderTaskId());
 
             if (criteria.getStatuses() != null) {
-                predicates.add(root.get(Task_.STATUSES).in(criteria.getStatuses()));
+                predicates.add(root.get(Task_.STATUS).in(criteria.getStatuses()));
             }
 
             addSearchStringPredicate(predicates, cb, root.get(Task_.PROVIDER_TYPE), criteria.getProviderType());

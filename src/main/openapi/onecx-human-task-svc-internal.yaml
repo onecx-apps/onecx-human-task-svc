@@ -177,7 +177,8 @@ components:
             $ref: '#/components/schemas/TaskStatus'
           description: Filter tasks by one or more statuses.
         providerType:
-          $ref: '#/components/schemas/ProviderType'
+          $ref: '#/components/schemas/ProviderType'          
+          description: Provider type, eg. CAMUNDA, N8N, etc.
         pageNumber:
           format: int32
           description: The number of page.
