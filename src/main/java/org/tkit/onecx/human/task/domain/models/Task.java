@@ -1,5 +1,6 @@
 package org.tkit.onecx.human.task.domain.models;
 
+import java.util.List;
 import java.util.Map;
 
 import jakarta.persistence.Column;
@@ -35,7 +36,7 @@ public class Task extends TraceableEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "STATUS", nullable = false)
-    private Status status;
+    private List<Status> statuses;
 
     @Column(name = "PROVIDER_TYPE", nullable = false)
     private String providerType;

@@ -275,8 +275,10 @@ components:
           description: Arbitrary key-value pairs forwarded to the provider as custom input
 
     TaskStatus:
-      type: string
-      enum:
+      type: array
+      items:
+        type: string
+        enum:
         - CREATED
         - ACCEPTED
         - DECLINED

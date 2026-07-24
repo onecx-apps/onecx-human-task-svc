@@ -45,18 +45,13 @@ public class TaskDAO extends AbstractDAO<Task> {
 
             List<Predicate> predicates = new ArrayList<>();
             addSearchStringPredicate(predicates, cb, root.get(Task_.TITLE), criteria.getTitle());
+            addSearchStringPredicate(predicates, cb, root.get(Task_.PROVIDER_TASK_ID), criteria.getProviderTaskId());
 
-            if (criteria.getProviderTaskId() != null) {
-                predicates.add(cb.equal(root.get(Task_.PROVIDER_TASK_ID), criteria.getProviderTaskId()));
+            if (criteria.getStatuses() != null) {
+                predicates.add(root.get(Task_.STATUSES).in(criteria.getStatuses()));
             }
 
-            if (criteria.getStatus() != null) {
-                predicates.add(root.get(Task_.STATUS).in(criteria.getStatus()));
-            }
-
-            if (criteria.getProviderType() != null) {
-                predicates.add(cb.equal(root.get(Task_.PROVIDER_TYPE), criteria.getProviderType()));
-            }
+            addSearchStringPredicate(predicates, cb, root.get(Task_.PROVIDER_TYPE), criteria.getProviderType());
 
             if (!predicates.isEmpty()) {
                 cq.where(cb.and(predicates.toArray(new Predicate[0])));

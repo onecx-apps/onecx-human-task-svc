@@ -1,8 +1,9 @@
 package org.tkit.onecx.human.task.domain.criteria;
 
+import java.util.List;
+
 import org.tkit.onecx.human.task.domain.models.Task;
 
-import io.quarkus.runtime.annotations.RegisterForReflection;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,7 +15,7 @@ public class TaskSearchCriteria {
 
     private String providerTaskId;
 
-    private Task.Status status;
+    private List<Task.Status> statuses;
 
     private String providerType;
 
