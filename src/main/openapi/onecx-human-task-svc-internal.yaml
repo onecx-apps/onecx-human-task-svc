@@ -175,6 +175,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/TaskStatus'
+          description: Filter tasks by one or more statuses.
         providerType:
           $ref: '#/components/schemas/ProviderType'
         pageNumber:
