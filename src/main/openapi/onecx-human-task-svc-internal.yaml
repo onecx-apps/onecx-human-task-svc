@@ -171,10 +171,20 @@ components:
     TaskSearchCriteria:
       type: object
       properties:
-        status:
-          $ref: '#/components/schemas/TaskStatus'
+        title:
+          type: string
+          description: Filter tasks by title (case-insensitive partial match).
+        providerTaskId:
+          type: string
+          description: Filter tasks by provider task ID (case-insensitive partial match).
+        statuses:
+          type: array
+          items:
+            $ref: '#/components/schemas/TaskStatus'
+          description: Filter tasks by one or more statuses.
         providerType:
-          $ref: '#/components/schemas/ProviderType'
+          $ref: '#/components/schemas/ProviderType'          
+          description: Provider type, eg. CAMUNDA, N8N, etc.
         pageNumber:
           format: int32
           description: The number of page.
