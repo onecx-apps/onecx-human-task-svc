@@ -1,11 +1,12 @@
 package org.tkit.onecx.human.task.domain.models;
 
+import java.util.Map;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Table;
-import java.util.Map;
 
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.TenantId;
