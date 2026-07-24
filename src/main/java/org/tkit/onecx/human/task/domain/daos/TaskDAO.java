@@ -30,7 +30,7 @@ public class TaskDAO extends AbstractDAO<Task> {
             var root = cq.from(Task.class);
             cq.where(cb.equal(root.get(TraceableEntity_.ID), id));
             return this.getEntityManager().createQuery(cq).getSingleResult();
-        } catch (NoResultException nre) {
+        } catch (NoResultException _) {
             return null;
         } catch (Exception e) {
             throw new DAOException(ErrorKeys.FIND_ENTITY_BY_ID_FAILED, e, entityName, id);

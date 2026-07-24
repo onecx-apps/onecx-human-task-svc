@@ -171,6 +171,12 @@ components:
     TaskSearchCriteria:
       type: object
       properties:
+        title:
+          type: string
+          description: Filter tasks by title (case-insensitive partial match).
+        providerTaskId:
+          type: string
+          description: Filter tasks by provider task ID (case-insensitive partial match).
         statuses:
           type: array
           items:
