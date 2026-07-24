@@ -36,7 +36,7 @@ public class Task extends TraceableEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "STATUS", nullable = false)
-    private List<Status> statuses;
+    private Status status;
 
     @Column(name = "PROVIDER_TYPE", nullable = false)
     private String providerType;
