@@ -8,7 +8,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@RegisterForReflection
 public class TaskSearchCriteria {
 
     private String title;
