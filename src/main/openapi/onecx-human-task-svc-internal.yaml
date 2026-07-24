@@ -171,8 +171,10 @@ components:
     TaskSearchCriteria:
       type: object
       properties:
-        status:
-          $ref: '#/components/schemas/TaskStatus'
+        statuses:
+          type: array
+          items:
+            $ref: '#/components/schemas/TaskStatus'
         providerType:
           $ref: '#/components/schemas/ProviderType'
         pageNumber:
@@ -275,10 +277,8 @@ components:
           description: Arbitrary key-value pairs forwarded to the provider as custom input
 
     TaskStatus:
-      type: array
-      items:
-        type: string
-        enum:
+      type: string
+      enum:
         - CREATED
         - ACCEPTED
         - DECLINED
