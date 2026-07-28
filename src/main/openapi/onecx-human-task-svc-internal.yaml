@@ -76,7 +76,7 @@ paths:
               $ref: '#/components/schemas/AcceptTaskRequest'
       responses:
         200:
-          description: Task acceptd successfully
+          description: Task accepted successfully
           content:
             application/json:
               schema:
