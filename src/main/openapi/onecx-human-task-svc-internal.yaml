@@ -41,7 +41,7 @@ paths:
       tags:
         - tasksInternal
       description: Delete a task by its id
-      operationId: deleteTask
+      operationId: deleteTaskById
       parameters:
         - name: id
           in: path
@@ -69,18 +69,14 @@ paths:
           schema:
             type: string
       requestBody:
-        required: false
+        required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/AcceptTaskRequest'
       responses:
-        200:
+        204:
           description: Task accepted successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Task'
         400:
           description: Bad request
           content:
@@ -105,18 +101,14 @@ paths:
           schema:
             type: string
       requestBody:
-        required: false
+        required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/DeclineTaskRequest'
       responses:
-        200:
+        204:
           description: Task declined successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Task'
         400:
           description: Bad request
           content:
@@ -133,7 +125,7 @@ paths:
       tags:
         - tasksInternal
       description: Search for tasks by search criteria
-      operationId: searchTasks
+      operationId: searchTasksByCriteria
       requestBody:
         required: true
         content:
@@ -183,7 +175,8 @@ components:
             $ref: '#/components/schemas/TaskStatus'
           description: Filter tasks by one or more statuses.
         providerType:
-          $ref: '#/components/schemas/ProviderType'          
+          allOf:
+            - $ref: '#/components/schemas/ProviderType'
           description: Provider type, eg. CAMUNDA, N8N, etc.
         pageNumber:
           format: int32
