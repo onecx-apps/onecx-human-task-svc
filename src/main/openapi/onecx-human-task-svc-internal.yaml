@@ -240,7 +240,7 @@ components:
           description: The task ID in the external provider system
         providerURL:
           type: string
-          description: URL of the specific provider instance
+          description: URL used to later accept or decline the task via the provider adapter.
         customInput:
           type: object
           additionalProperties:
