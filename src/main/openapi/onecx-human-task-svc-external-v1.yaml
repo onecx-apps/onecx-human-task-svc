@@ -1,12 +1,40 @@
 openapi: 3.0.3
 info:
-  title: onecx-human-task-svc API
+  title: onecx-human-task external service V1
+  description: External API used by workflow providers (eg. Camunda, n8n) to create human tasks in OneCX.
   version: 1.0.0
 
 servers:
-  - url: http://onecx-human-task-svc:8080/api
+  - url: http://onecx-human-task-svc:8080
 
-paths: {}
+tags:
+  - name: tasks
+    description: Managing human tasks
+
+paths:
+  /v1/tasks:
+    post:
+      security:
+        - oauth2: [ ocx-ht:all, ocx-ht:write ]
+      tags:
+        - tasks
+      description: Create a new human task
+      operationId: createTask
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTaskRequest'
+      responses:
+        204:
+          description: Task created successfully
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
 
 components:
   securitySchemes:
@@ -22,21 +50,38 @@ components:
             "ocx-ht:delete": Grants access to delete operations
 
   schemas:
-    ProblemDetailParam:
+    CreateTaskRequest:
       type: object
+      required:
+        - title
+        - providerType
+        - providerTaskId
+        - providerURL
       properties:
-        key:
+        title:
           type: string
-        value:
+          maxLength: 255
+          description: The title of the task.
+        description:
           type: string
+          maxLength: 255
+          description: The description of the task.
+        providerType:
+          $ref: '#/components/schemas/ProviderType'
+        providerTaskId:
+          type: string
+          maxLength: 255
+          description: The task ID in the external provider system.
+        providerURL:
+          type: string
+          maxLength: 255
+          description: URL used to later accept or decline the task via the provider adapter.
 
-    ProblemDetailInvalidParam:
-      type: object
-      properties:
-        name:
-          type: string
-        message:
-          type: string
+    ProviderType:
+      type: string
+      enum:
+        - CAMUNDA
+        - N8N
 
     ProblemDetailResponse:
       type: object
@@ -53,3 +98,19 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ProblemDetailInvalidParam'
+
+    ProblemDetailParam:
+      type: object
+      properties:
+        key:
+          type: string
+        value:
+          type: string
+
+    ProblemDetailInvalidParam:
+      type: object
+      properties:
+        name:
+          type: string
+        message:
+          type: string
