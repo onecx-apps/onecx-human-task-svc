@@ -165,10 +165,10 @@ components:
       properties:
         title:
           type: string
-          description: Filter tasks by title (case-insensitive partial match).
+          description: Filter tasks by title
         providerTaskId:
           type: string
-          description: Filter tasks by provider task ID (case-insensitive partial match).
+          description: Filter tasks by provider task ID
         statuses:
           type: array
           items:
