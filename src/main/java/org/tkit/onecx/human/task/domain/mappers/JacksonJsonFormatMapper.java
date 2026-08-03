@@ -2,8 +2,6 @@ package org.tkit.onecx.human.task.domain.mappers;
 
 import java.io.IOException;
 
-import jakarta.inject.Inject;
-
 import org.hibernate.HibernateException;
 import org.hibernate.type.descriptor.WrapperOptions;
 import org.hibernate.type.descriptor.java.JavaType;
@@ -18,8 +16,7 @@ import io.quarkus.hibernate.orm.PersistenceUnitExtension;
 @PersistenceUnitExtension
 public class JacksonJsonFormatMapper implements FormatMapper {
 
-    @Inject
-    ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
 
     public JacksonJsonFormatMapper(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;

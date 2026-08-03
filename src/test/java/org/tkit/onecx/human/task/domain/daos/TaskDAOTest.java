@@ -1,5 +1,7 @@
 package org.tkit.onecx.human.task.domain.daos;
 
+import static org.mockito.Mockito.doThrow;
+
 import java.util.List;
 import java.util.Map;
 
@@ -11,7 +13,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
-import org.mockito.Mockito;
 import org.tkit.onecx.human.task.domain.criteria.TaskSearchCriteria;
 import org.tkit.onecx.human.task.domain.models.Task;
 import org.tkit.quarkus.jpa.exceptions.DAOException;
@@ -138,7 +139,7 @@ class TaskDAOTest {
 
     @Test
     void methodExceptionTests() {
-        Mockito.doThrow(new RuntimeException("Test technical error exception"))
+        doThrow(new RuntimeException("Test technical error exception"))
                 .when(entityManager).getCriteriaBuilder();
         methodExceptionTests(() -> taskDAO.findById("some-id"),
                 TaskDAO.ErrorKeys.FIND_ENTITY_BY_ID_FAILED);
