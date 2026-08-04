@@ -9,7 +9,7 @@ servers:
   - url: http://onecx-human-task-n8n-adapter:8080
 
 tags:
-  - name: tasks
+  - name: tasksAdapter
     description: Managing human tasks in provider workflows
 
 paths:

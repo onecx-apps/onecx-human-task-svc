@@ -14,7 +14,7 @@
     <packaging>quarkus</packaging>
     
     <name>onecx-human-task-svc</name>
-    <description>onecx-human-task-svc - OneCX Backend Service</description>
+    <description>OneCX Human Task Backend Service</description>
 
     <dependencies>
         <!-- OneCX / TKit -->
