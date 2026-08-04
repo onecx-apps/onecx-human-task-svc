@@ -1,4 +1,4 @@
-package org.tkit.onecx.human.task.rs.external.v1.mappers;
+package org.tkit.onecx.human.task.rs.mappers;
 
 import org.mapstruct.Mapper;
 
