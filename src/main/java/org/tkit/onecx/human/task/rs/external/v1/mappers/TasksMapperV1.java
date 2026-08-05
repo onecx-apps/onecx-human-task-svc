@@ -3,6 +3,7 @@ package org.tkit.onecx.human.task.rs.external.v1.mappers;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.tkit.onecx.human.task.domain.models.Task;
+import org.tkit.onecx.human.task.rs.mappers.ProviderTypeMapper;
 import org.tkit.quarkus.rs.mappers.OffsetDateTimeMapper;
 
 import gen.org.tkit.onecx.human.task.rs.external.v1.model.CreateTaskRequestDTOV1;
