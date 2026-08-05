@@ -224,7 +224,7 @@
                             <inputSpec>src/main/openapi/onecx-human-task-adapter-v1.yaml</inputSpec>
                             <apiPackage>gen.org.tkit.onecx.human.task.rs.adapter.v1</apiPackage>
                             <modelPackage>gen.org.tkit.onecx.human.task.rs.adapter.v1.model</modelPackage>
-                            <modelNameSuffix>DTOAdapterV1</modelNameSuffix>
+                            <modelNameSuffix>AdapterDTOV1</modelNameSuffix>
                             <apiNameSuffix>AdapterV1Api</apiNameSuffix>
                         </configuration>
                     </execution>
