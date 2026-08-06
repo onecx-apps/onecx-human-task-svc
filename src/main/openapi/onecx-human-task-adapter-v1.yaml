@@ -100,7 +100,7 @@ components:
           type: object
           additionalProperties:
             type: string
-          description: Arbitrary key-value pairs provided by the user with the accept action, forwarded to the provider.
+          description: Arbitrary key-value pairs provided by the user with the accept/decline action, forwarded to the provider.
 
     ProviderType:
       type: string
