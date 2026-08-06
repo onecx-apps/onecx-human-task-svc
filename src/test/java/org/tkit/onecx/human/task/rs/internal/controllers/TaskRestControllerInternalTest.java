@@ -2,6 +2,7 @@ package org.tkit.onecx.human.task.rs.internal.controllers;
 
 import static io.restassured.RestAssured.given;
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
+import static jakarta.ws.rs.core.Response.Status.BAD_REQUEST;
 import static jakarta.ws.rs.core.Response.Status.NOT_FOUND;
 import static jakarta.ws.rs.core.Response.Status.NO_CONTENT;
 import static jakarta.ws.rs.core.Response.Status.OK;
@@ -28,7 +29,7 @@ import io.restassured.RestAssured;
 @GenerateKeycloakClient(clientName = "testClient", scopes = { "ocx-ht:all", "ocx-ht:read", "ocx-ht:write", "ocx-ht:delete" })
 class TaskRestControllerInternalTest extends AbstractTest {
 
-    private static final String TENANT = "default";
+    private static final String TENANT = "org1";
 
     @BeforeEach
     void cleanDatabase() {
@@ -37,7 +38,7 @@ class TaskRestControllerInternalTest extends AbstractTest {
 
     @Test
     void getTaskById_shouldReturnTask() {
-        var task = createTask("provider-1", ProviderTypeDTO.N8_N.toString());
+        var task = createTask("task-1", ProviderTypeDTO.N8_N.toString());
 
         var response = given()
                 .auth().oauth2(getKeycloakClientToken("testClient"))
@@ -51,7 +52,7 @@ class TaskRestControllerInternalTest extends AbstractTest {
 
         assertThat(response.getId()).isEqualTo(task.getId());
         assertThat(response.getStatus()).isEqualTo(TaskStatusDTO.CREATED);
-        assertThat(response.getProviderTaskId()).isEqualTo("provider-1");
+        assertThat(response.getProviderTaskId()).isEqualTo("task-1");
     }
 
     @Test
@@ -67,7 +68,7 @@ class TaskRestControllerInternalTest extends AbstractTest {
 
     @Test
     void acceptTask_shouldUpdateStatusAndInput() {
-        var task = createTask("provider-2", "CAMUNDA");
+        var task = createTask("task-2", ProviderTypeDTO.CAMUNDA.toString());
         var request = new AcceptTaskRequestDTO(task.getModificationCount());
         request.setInput(Map.of("k1", "v1"));
 
@@ -96,7 +97,7 @@ class TaskRestControllerInternalTest extends AbstractTest {
 
     @Test
     void declineTask_shouldReturn404_whenModificationCountMismatch() {
-        var task = createTask("provider-3", "N8N");
+        var task = createTask("task-3", ProviderTypeDTO.N8_N.toString());
         var request = new DeclineTaskRequestDTO(task.getModificationCount() + 1);
         request.setInput(Map.of("reason", "no"));
 
@@ -112,7 +113,7 @@ class TaskRestControllerInternalTest extends AbstractTest {
 
     @Test
     void deleteTask_shouldDeleteTask() {
-        var task = createTask("provider-4", "N8N");
+        var task = createTask("task-4", ProviderTypeDTO.N8_N.toString());
 
         given()
                 .auth().oauth2(getKeycloakClientToken("testClient"))
@@ -130,9 +131,19 @@ class TaskRestControllerInternalTest extends AbstractTest {
     }
 
     @Test
+    void deleteTask_shouldReturn404_whenTaskNotFound() {
+        given()
+                .auth().oauth2(getKeycloakClientToken("testClient"))
+                .header(APM_HEADER_PARAM, createToken(TENANT))
+                .delete("/{id}", "missing-id")
+                .then()
+                .statusCode(NOT_FOUND.getStatusCode());
+    }
+
+    @Test
     void searchTasks_shouldReturnFilteredTasks() {
-        createTask("provider-5", "N8N");
-        var acceptedTask = createTask("provider-6", "CAMUNDA");
+        createTask("task-5", ProviderTypeDTO.N8_N.toString());
+        var acceptedTask = createTask("task-6", ProviderTypeDTO.CAMUNDA.toString());
         var acceptRequest = new AcceptTaskRequestDTO(acceptedTask.getModificationCount());
 
         given()
@@ -163,6 +174,72 @@ class TaskRestControllerInternalTest extends AbstractTest {
         assertThat(response.getTotalElements()).isEqualTo(1);
         assertThat(response.getStream()).hasSize(1);
         assertThat(response.getStream().getFirst().getStatus()).isEqualTo(TaskStatusDTO.CREATED);
+    }
+
+    @Test
+    void acceptTask_shouldReturn404_whenTaskNotFound() {
+        var request = new AcceptTaskRequestDTO(1);
+        request.setInput(Map.of("k1", "v1"));
+
+        given()
+                .auth().oauth2(getKeycloakClientToken("testClient"))
+                .header(APM_HEADER_PARAM, createToken(TENANT))
+                .contentType(APPLICATION_JSON)
+                .body(request)
+                .post("/{id}/accept", "missing-id")
+                .then()
+                .statusCode(NOT_FOUND.getStatusCode());
+    }
+
+    @Test
+    void declineTask_shouldReturn404_whenStatusIsNotCreated() {
+        var task = createTask("task-7", ProviderTypeDTO.N8_N.toString());
+        var acceptRequest = new AcceptTaskRequestDTO(task.getModificationCount());
+
+        given()
+                .auth().oauth2(getKeycloakClientToken("testClient"))
+                .header(APM_HEADER_PARAM, createToken(TENANT))
+                .contentType(APPLICATION_JSON)
+                .body(acceptRequest)
+                .post("/{id}/accept", task.getId())
+                .then()
+                .statusCode(NO_CONTENT.getStatusCode());
+
+        var updated = given()
+                .auth().oauth2(getKeycloakClientToken("testClient"))
+                .header(APM_HEADER_PARAM, createToken(TENANT))
+                .contentType(APPLICATION_JSON)
+                .get("/{id}", task.getId())
+                .then()
+                .statusCode(OK.getStatusCode())
+                .extract()
+                .as(TaskDTO.class);
+
+        var declineRequest = new DeclineTaskRequestDTO(updated.getModificationCount());
+        declineRequest.setInput(Map.of("reason", "already accepted"));
+
+        given()
+                .auth().oauth2(getKeycloakClientToken("testClient"))
+                .header(APM_HEADER_PARAM, createToken(TENANT))
+                .contentType(APPLICATION_JSON)
+                .body(declineRequest)
+                .post("/{id}/decline", task.getId())
+                .then()
+                .statusCode(NOT_FOUND.getStatusCode());
+    }
+
+    @Test
+    void acceptTask_shouldReturn400_whenModificationCountIsMissing() {
+        var task = createTask("task-8", ProviderTypeDTO.N8_N.toString());
+
+        given()
+                .auth().oauth2(getKeycloakClientToken("testClient"))
+                .header(APM_HEADER_PARAM, createToken(TENANT))
+                .contentType(APPLICATION_JSON)
+                .body("{}")
+                .post("/{id}/accept", task.getId())
+                .then()
+                .statusCode(BAD_REQUEST.getStatusCode());
     }
 
     private TaskDTO createTask(String providerTaskId, String providerType) {
