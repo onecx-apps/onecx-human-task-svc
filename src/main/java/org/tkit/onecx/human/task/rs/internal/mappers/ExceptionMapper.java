@@ -33,7 +33,6 @@ public interface ExceptionMapper {
             Set<ConstraintViolation<?>> constraintViolations);
 
     @Mapping(target = "name", source = "propertyPath")
-    @Mapping(target = "message", source = "message")
     ProblemDetailInvalidParamDTO createError(ConstraintViolation<?> constraintViolation);
 
     default String mapPath(Path path) {

@@ -4,7 +4,7 @@ import org.mapstruct.Mapper;
 
 import gen.org.tkit.onecx.human.task.rs.internal.model.ProviderTypeDTO;
 
-@Mapper(componentModel = "cdi")
+@Mapper
 public interface ProviderTypeMapper {
 
     default String map(ProviderTypeDTO value) {
