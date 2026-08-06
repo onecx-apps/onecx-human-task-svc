@@ -26,7 +26,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AcceptTaskRequest'
+              $ref: '#/components/schemas/ProcessTaskRequest'
       responses:
         204:
           description: Task accepted successfully
@@ -52,7 +52,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DeclineTaskRequest'
+              $ref: '#/components/schemas/ProcessTaskRequest'
       responses:
         204:
           description: Task declined successfully
@@ -79,7 +79,7 @@ components:
             "ocx-ht:delete": Grants access to delete operations
 
   schemas:
-    AcceptTaskRequest:
+    ProcessTaskRequest:
       required:
         - providerType
         - providerTaskId
@@ -100,30 +100,7 @@ components:
           type: object
           additionalProperties:
             type: string
-          description: Arbitrary key-value pairs provided by the user with the accept action, forwarded to the provider.
-
-    DeclineTaskRequest:
-      required:
-        - providerType
-        - providerTaskId
-        - providerURL
-      type: object
-      properties:
-        providerType:
-          $ref: '#/components/schemas/ProviderType'
-        providerTaskId:
-          type: string
-          maxLength: 255
-          description: The task ID in the external provider system.
-        providerURL:
-          type: string
-          maxLength: 255
-          description: URL of the specific provider instance (eg. an n8n or Camunda installation) to act on.
-        customInput:
-          type: object
-          additionalProperties:
-            type: string
-          description: Arbitrary key-value pairs provided by the user with the decline action, forwarded to the provider.
+          description: Arbitrary key-value pairs provided by the user with the accept/decline action, forwarded to the provider.
 
     ProviderType:
       type: string
