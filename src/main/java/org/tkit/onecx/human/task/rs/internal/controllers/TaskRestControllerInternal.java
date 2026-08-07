@@ -41,15 +41,12 @@ public class TaskRestControllerInternal implements TasksInternalApi {
     ExceptionMapper exceptionMapper;
 
     @Override
-    public Response acceptTask(String id, AcceptTaskRequestDTO acceptTaskRequestDTO) {
-        return updateTaskStatus(id, acceptTaskRequestDTO.getInput(),
-                Task.Status.ACCEPTED);
-    }
-
-    @Override
-    public Response declineTask(String id, DeclineTaskRequestDTO declineTaskRequestDTO) {
-        return updateTaskStatus(id, declineTaskRequestDTO.getInput(),
-                Task.Status.DECLINED);
+    public Response getTaskById(String id) {
+        var item = dao.findById(id);
+        if (item == null) {
+            return Response.status(NOT_FOUND).build();
+        }
+        return Response.ok(mapper.toTaskDTO(item)).build();
     }
 
     @Override
@@ -64,12 +61,15 @@ public class TaskRestControllerInternal implements TasksInternalApi {
     }
 
     @Override
-    public Response getTaskById(String id) {
-        var item = dao.findById(id);
-        if (item == null) {
-            return Response.status(NOT_FOUND).build();
-        }
-        return Response.ok(mapper.toTaskDTO(item)).build();
+    public Response acceptTask(String id, AcceptTaskRequestDTO acceptTaskRequestDTO) {
+        return updateTaskStatus(id, acceptTaskRequestDTO.getInput(),
+                Task.Status.ACCEPTED);
+    }
+
+    @Override
+    public Response declineTask(String id, DeclineTaskRequestDTO declineTaskRequestDTO) {
+        return updateTaskStatus(id, declineTaskRequestDTO.getInput(),
+                Task.Status.DECLINED);
     }
 
     @Override

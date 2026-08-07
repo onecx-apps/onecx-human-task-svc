@@ -58,6 +58,33 @@ class TaskRestControllerInternalTest extends AbstractTest {
     }
 
     @Test
+    void deleteTaskById_shouldDeleteTask() {
+        given()
+                .auth().oauth2(getKeycloakClientToken("testClient"))
+                .header(APM_HEADER_PARAM, createToken(TENANT))
+                .delete("/{id}", "44-444")
+                .then()
+                .statusCode(NO_CONTENT.getStatusCode());
+
+        given()
+                .auth().oauth2(getKeycloakClientToken("testClient"))
+                .header(APM_HEADER_PARAM, createToken(TENANT))
+                .get("/{id}", "44-444")
+                .then()
+                .statusCode(NOT_FOUND.getStatusCode());
+    }
+
+    @Test
+    void deleteTaskById_shouldReturn404_whenTaskNotFound() {
+        given()
+                .auth().oauth2(getKeycloakClientToken("testClient"))
+                .header(APM_HEADER_PARAM, createToken(TENANT))
+                .delete("/{id}", "missing-id")
+                .then()
+                .statusCode(NOT_FOUND.getStatusCode());
+    }
+
+    @Test
     void acceptTask_shouldUpdateStatusAndInput() {
         var request = new AcceptTaskRequestDTO(0);
         request.setInput(Map.of("k1", "v1"));
@@ -188,33 +215,6 @@ class TaskRestControllerInternalTest extends AbstractTest {
                 .as(TaskDTO.class);
 
         assertThat(updated.getStatus()).isEqualTo(TaskStatusDTO.DECLINED);
-    }
-
-    @Test
-    void deleteTaskById_shouldDeleteTask() {
-        given()
-                .auth().oauth2(getKeycloakClientToken("testClient"))
-                .header(APM_HEADER_PARAM, createToken(TENANT))
-                .delete("/{id}", "44-444")
-                .then()
-                .statusCode(NO_CONTENT.getStatusCode());
-
-        given()
-                .auth().oauth2(getKeycloakClientToken("testClient"))
-                .header(APM_HEADER_PARAM, createToken(TENANT))
-                .get("/{id}", "44-444")
-                .then()
-                .statusCode(NOT_FOUND.getStatusCode());
-    }
-
-    @Test
-    void deleteTaskById_shouldReturn404_whenTaskNotFound() {
-        given()
-                .auth().oauth2(getKeycloakClientToken("testClient"))
-                .header(APM_HEADER_PARAM, createToken(TENANT))
-                .delete("/{id}", "missing-id")
-                .then()
-                .statusCode(NOT_FOUND.getStatusCode());
     }
 
     @Test
