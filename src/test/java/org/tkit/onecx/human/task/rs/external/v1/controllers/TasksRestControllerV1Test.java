@@ -34,7 +34,6 @@ class TasksRestControllerV1Test extends AbstractTest {
 
         given()
                 .auth().oauth2(getKeycloakClientToken("testClient"))
-                .header(APM_HEADER_PARAM, createToken("org1"))
                 .contentType(APPLICATION_JSON)
                 .body(request)
                 .post()
@@ -47,7 +46,6 @@ class TasksRestControllerV1Test extends AbstractTest {
     void createTask_shouldReturn400_whenRequiredFieldsAreMissing() {
         var exception = given()
                 .auth().oauth2(getKeycloakClientToken("testClient"))
-                .header(APM_HEADER_PARAM, createToken("org1"))
                 .contentType(APPLICATION_JSON)
                 .body(new CreateTaskRequestDTOV1())
                 .post()

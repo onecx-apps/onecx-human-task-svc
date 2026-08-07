@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+    <TASK guid="11-111" optlock="0" title="Internal Task task-1" description="desc task-1" provider_task_id="task-1"
+          provider_type="N8N" provider_url="https://N8N/task-1" status="CREATED" tenant_id="org1"/>
+    <TASK guid="22-222" optlock="0" title="Internal Task task-2" description="desc task-2" provider_task_id="task-2"
+          provider_type="CAMUNDA" provider_url="https://CAMUNDA/task-2" status="ACCEPTED" tenant_id="org1"/>
+</dataset>

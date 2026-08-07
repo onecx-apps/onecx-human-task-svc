@@ -147,6 +147,11 @@
             <artifactId>tkit-quarkus-security-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.tkit.quarkus.lib</groupId>
+            <artifactId>tkit-quarkus-test-db-import</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>

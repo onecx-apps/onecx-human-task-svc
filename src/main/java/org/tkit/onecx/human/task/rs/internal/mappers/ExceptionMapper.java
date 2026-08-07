@@ -1,8 +1,9 @@
-package org.tkit.onecx.human.task.rs.external.v1.mappers;
+package org.tkit.onecx.human.task.rs.internal.mappers;
 
 import java.util.List;
 import java.util.Set;
 
+import jakarta.persistence.OptimisticLockException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Path;
@@ -11,16 +12,22 @@ import jakarta.ws.rs.core.Response;
 import org.jboss.resteasy.reactive.RestResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.tkit.quarkus.log.cdi.LogService;
 
-import gen.org.tkit.onecx.human.task.rs.external.v1.model.ProblemDetailInvalidParamDTOV1;
-import gen.org.tkit.onecx.human.task.rs.external.v1.model.ProblemDetailResponseDTOV1;
+import gen.org.tkit.onecx.human.task.rs.internal.model.ProblemDetailInvalidParamDTO;
+import gen.org.tkit.onecx.human.task.rs.internal.model.ProblemDetailResponseDTO;
 
 @Mapper
 public interface ExceptionMapper {
-
-    default RestResponse<ProblemDetailResponseDTOV1> constraint(ConstraintViolationException ex) {
+    default RestResponse<ProblemDetailResponseDTO> constraint(ConstraintViolationException ex) {
         var dto = exception(ErrorKeys.CONSTRAINT_VIOLATIONS.name(), ex.getMessage());
         dto.setInvalidParams(createErrorValidationResponse(ex.getConstraintViolations()));
+        return RestResponse.status(Response.Status.BAD_REQUEST, dto);
+    }
+
+    @LogService(log = false)
+    default RestResponse<ProblemDetailResponseDTO> optimisticLock(OptimisticLockException ex) {
+        var dto = exception(ErrorKeys.OPTIMISTIC_LOCK.name(), ex.getMessage());
         return RestResponse.status(Response.Status.BAD_REQUEST, dto);
     }
 
@@ -28,19 +35,20 @@ public interface ExceptionMapper {
     @Mapping(target = "params", ignore = true)
     @Mapping(target = "invalidParams", ignore = true)
     @Mapping(target = "removeInvalidParamsItem", ignore = true)
-    ProblemDetailResponseDTOV1 exception(String errorCode, String detail);
+    ProblemDetailResponseDTO exception(String errorCode, String detail);
 
-    List<ProblemDetailInvalidParamDTOV1> createErrorValidationResponse(
+    List<ProblemDetailInvalidParamDTO> createErrorValidationResponse(
             Set<ConstraintViolation<?>> constraintViolations);
 
     @Mapping(target = "name", source = "propertyPath")
-    ProblemDetailInvalidParamDTOV1 createError(ConstraintViolation<?> constraintViolation);
+    ProblemDetailInvalidParamDTO createError(ConstraintViolation<?> constraintViolation);
 
     default String mapPath(Path path) {
         return path.toString();
     }
 
     enum ErrorKeys {
-        CONSTRAINT_VIOLATIONS
+        CONSTRAINT_VIOLATIONS,
+        OPTIMISTIC_LOCK,
     }
 }
