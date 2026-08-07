@@ -3,17 +3,5 @@
     <TASK guid="11-111" optlock="0" title="Internal Task task-1" description="desc task-1" provider_task_id="task-1"
           provider_type="N8N" provider_url="https://N8N/task-1" status="CREATED" tenant_id="org1"/>
     <TASK guid="22-222" optlock="0" title="Internal Task task-2" description="desc task-2" provider_task_id="task-2"
-          provider_type="CAMUNDA" provider_url="https://CAMUNDA/task-2" status="CREATED" tenant_id="org1"/>
-    <TASK guid="33-333" optlock="0" title="Internal Task task-3" description="desc task-3" provider_task_id="task-3"
-          provider_type="N8N" provider_url="https://N8N/task-3" status="CREATED" tenant_id="org1"/>
-    <TASK guid="44-444" optlock="0" title="Internal Task task-4" description="desc task-4" provider_task_id="task-4"
-          provider_type="N8N" provider_url="https://N8N/task-4" status="CREATED" tenant_id="org1"/>
-    <TASK guid="55-555" optlock="0" title="Internal Task task-5" description="desc task-5" provider_task_id="task-5"
-          provider_type="N8N" provider_url="https://N8N/task-5" status="CREATED" tenant_id="org1"/>
-    <TASK guid="66-666" optlock="0" title="Internal Task task-6" description="desc task-6" provider_task_id="task-6"
-          provider_type="CAMUNDA" provider_url="https://CAMUNDA/task-6" status="ACCEPTED" tenant_id="org1"/>
-    <TASK guid="77-777" optlock="0" title="Internal Task task-7" description="desc task-7" provider_task_id="task-7"
-          provider_type="N8N" provider_url="https://N8N/task-7" status="CREATED" tenant_id="org1"/>
-    <TASK guid="88-888" optlock="0" title="Internal Task task-8" description="desc task-8" provider_task_id="task-8"
-          provider_type="N8N" provider_url="https://N8N/task-8" status="CREATED" tenant_id="org1"/>
+          provider_type="CAMUNDA" provider_url="https://CAMUNDA/task-2" status="ACCEPTED" tenant_id="org1"/>
 </dataset>

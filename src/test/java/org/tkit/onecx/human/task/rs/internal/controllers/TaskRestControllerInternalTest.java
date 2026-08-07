@@ -62,14 +62,14 @@ class TaskRestControllerInternalTest extends AbstractTest {
         given()
                 .auth().oauth2(getKeycloakClientToken("testClient"))
                 .header(APM_HEADER_PARAM, createToken(TENANT))
-                .delete("/{id}", "44-444")
+                .delete("/{id}", "11-111")
                 .then()
                 .statusCode(NO_CONTENT.getStatusCode());
 
         given()
                 .auth().oauth2(getKeycloakClientToken("testClient"))
                 .header(APM_HEADER_PARAM, createToken(TENANT))
-                .get("/{id}", "44-444")
+                .get("/{id}", "11-111")
                 .then()
                 .statusCode(NOT_FOUND.getStatusCode());
     }
@@ -94,7 +94,7 @@ class TaskRestControllerInternalTest extends AbstractTest {
                 .header(APM_HEADER_PARAM, createToken(TENANT))
                 .contentType(APPLICATION_JSON)
                 .body(request)
-                .post("/{id}/accept", "22-222")
+                .post("/{id}/accept", "11-111")
                 .then()
                 .statusCode(NO_CONTENT.getStatusCode());
 
@@ -102,7 +102,7 @@ class TaskRestControllerInternalTest extends AbstractTest {
                 .auth().oauth2(getKeycloakClientToken("testClient"))
                 .header(APM_HEADER_PARAM, createToken(TENANT))
                 .contentType(APPLICATION_JSON)
-                .get("/{id}", "22-222")
+                .get("/{id}", "11-111")
                 .then()
                 .statusCode(OK.getStatusCode())
                 .extract()
@@ -134,9 +134,38 @@ class TaskRestControllerInternalTest extends AbstractTest {
                 .header(APM_HEADER_PARAM, createToken(TENANT))
                 .contentType(APPLICATION_JSON)
                 .body("{}")
-                .post("/{id}/accept", "88-888")
+                .post("/{id}/accept", "11-111")
                 .then()
                 .statusCode(BAD_REQUEST.getStatusCode());
+    }
+
+    @Test
+    void acceptTask_shouldReturn400_whenModificationCountIsStale() {
+        var exception = given()
+                .auth().oauth2(getKeycloakClientToken("testClient"))
+                .header(APM_HEADER_PARAM, createToken(TENANT))
+                .contentType(APPLICATION_JSON)
+                .body(new AcceptTaskRequestDTO(5))
+                .post("/{id}/accept", "11-111")
+                .then()
+                .statusCode(BAD_REQUEST.getStatusCode())
+                .extract()
+                .as(ProblemDetailResponseDTO.class);
+
+        assertThat(exception).isNotNull();
+        assertThat(exception.getErrorCode()).isEqualTo(ExceptionMapper.ErrorKeys.OPTIMISTIC_LOCK.name());
+    }
+
+    @Test
+    void acceptTask_shouldReturn404_whenTaskStatusIsNotCreated() {
+        given()
+                .auth().oauth2(getKeycloakClientToken("testClient"))
+                .header(APM_HEADER_PARAM, createToken(TENANT))
+                .contentType(APPLICATION_JSON)
+                .body(new AcceptTaskRequestDTO(0))
+                .post("/{id}/accept", "22-222")
+                .then()
+                .statusCode(NOT_FOUND.getStatusCode());
     }
 
     @Test
@@ -149,7 +178,7 @@ class TaskRestControllerInternalTest extends AbstractTest {
                 .header(APM_HEADER_PARAM, createToken(TENANT))
                 .contentType(APPLICATION_JSON)
                 .body(request)
-                .post("/{id}/decline", "33-333")
+                .post("/{id}/decline", "11-111")
                 .then()
                 .statusCode(NO_CONTENT.getStatusCode());
 
@@ -157,7 +186,7 @@ class TaskRestControllerInternalTest extends AbstractTest {
                 .auth().oauth2(getKeycloakClientToken("testClient"))
                 .header(APM_HEADER_PARAM, createToken(TENANT))
                 .contentType(APPLICATION_JSON)
-                .get("/{id}", "33-333")
+                .get("/{id}", "11-111")
                 .then()
                 .statusCode(OK.getStatusCode())
                 .extract()
@@ -168,15 +197,13 @@ class TaskRestControllerInternalTest extends AbstractTest {
     }
 
     @Test
-    void declineTask_afterAccept_shouldUpdateStatus() {
-        var acceptRequest = new AcceptTaskRequestDTO(0);
-
+    void declineTask_afterAccept_shouldReturn404() {
         given()
                 .auth().oauth2(getKeycloakClientToken("testClient"))
                 .header(APM_HEADER_PARAM, createToken(TENANT))
                 .contentType(APPLICATION_JSON)
-                .body(acceptRequest)
-                .post("/{id}/accept", "77-777")
+                .body(new AcceptTaskRequestDTO(0))
+                .post("/{id}/accept", "11-111")
                 .then()
                 .statusCode(NO_CONTENT.getStatusCode());
 
@@ -184,7 +211,7 @@ class TaskRestControllerInternalTest extends AbstractTest {
                 .auth().oauth2(getKeycloakClientToken("testClient"))
                 .header(APM_HEADER_PARAM, createToken(TENANT))
                 .contentType(APPLICATION_JSON)
-                .get("/{id}", "77-777")
+                .get("/{id}", "11-111")
                 .then()
                 .statusCode(OK.getStatusCode())
                 .extract()
@@ -200,27 +227,27 @@ class TaskRestControllerInternalTest extends AbstractTest {
                 .header(APM_HEADER_PARAM, createToken(TENANT))
                 .contentType(APPLICATION_JSON)
                 .body(declineRequest)
-                .post("/{id}/decline", "77-777")
+                .post("/{id}/decline", "11-111")
                 .then()
-                .statusCode(NO_CONTENT.getStatusCode());
+                .statusCode(NOT_FOUND.getStatusCode());
+    }
 
-        updated = given()
+    @Test
+    void declineTask_shouldReturn404_whenTaskStatusIsNotCreated() {
+        given()
                 .auth().oauth2(getKeycloakClientToken("testClient"))
                 .header(APM_HEADER_PARAM, createToken(TENANT))
                 .contentType(APPLICATION_JSON)
-                .get("/{id}", "77-777")
+                .body(new DeclineTaskRequestDTO(0))
+                .post("/{id}/decline", "22-222")
                 .then()
-                .statusCode(OK.getStatusCode())
-                .extract()
-                .as(TaskDTO.class);
-
-        assertThat(updated.getStatus()).isEqualTo(TaskStatusDTO.DECLINED);
+                .statusCode(NOT_FOUND.getStatusCode());
     }
 
     @Test
     void searchTasks_shouldReturnFilteredTasks() {
         var criteria = new TaskSearchCriteriaDTO();
-        criteria.setProviderTaskId("task-5");
+        criteria.setProviderTaskId("task-1");
         criteria.setStatuses(List.of(TaskStatusDTO.CREATED));
         criteria.setPageNumber(0);
         criteria.setPageSize(10);

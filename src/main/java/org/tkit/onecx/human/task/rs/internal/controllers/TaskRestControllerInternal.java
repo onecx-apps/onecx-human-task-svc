@@ -17,7 +17,6 @@ import org.tkit.onecx.human.task.domain.daos.TaskDAO;
 import org.tkit.onecx.human.task.domain.models.Task;
 import org.tkit.onecx.human.task.rs.internal.mappers.ExceptionMapper;
 import org.tkit.onecx.human.task.rs.internal.mappers.TaskMapper;
-import org.tkit.quarkus.jpa.exceptions.ConstraintException;
 import org.tkit.quarkus.log.cdi.LogService;
 
 import gen.org.tkit.onecx.human.task.rs.internal.TasksInternalApi;
@@ -62,13 +61,13 @@ public class TaskRestControllerInternal implements TasksInternalApi {
 
     @Override
     public Response acceptTask(String id, AcceptTaskRequestDTO acceptTaskRequestDTO) {
-        return updateTaskStatus(id, acceptTaskRequestDTO.getInput(),
+        return updateTaskStatus(id, acceptTaskRequestDTO.getModificationCount(), acceptTaskRequestDTO.getInput(),
                 Task.Status.ACCEPTED);
     }
 
     @Override
     public Response declineTask(String id, DeclineTaskRequestDTO declineTaskRequestDTO) {
-        return updateTaskStatus(id, declineTaskRequestDTO.getInput(),
+        return updateTaskStatus(id, declineTaskRequestDTO.getModificationCount(), declineTaskRequestDTO.getInput(),
                 Task.Status.DECLINED);
     }
 
@@ -76,11 +75,6 @@ public class TaskRestControllerInternal implements TasksInternalApi {
     public Response searchTasksByCriteria(TaskSearchCriteriaDTO taskSearchCriteriaDTO) {
         var result = dao.findTasksByCriteria(mapper.toTaskSearchCriteria(taskSearchCriteriaDTO));
         return Response.ok(mapper.totaskPageResultDTO(result)).build();
-    }
-
-    @ServerExceptionMapper
-    public RestResponse<ProblemDetailResponseDTO> exception(ConstraintException ex) {
-        return exceptionMapper.exception(ex);
     }
 
     @ServerExceptionMapper
@@ -93,13 +87,14 @@ public class TaskRestControllerInternal implements TasksInternalApi {
         return exceptionMapper.optimisticLock(ex);
     }
 
-    private Response updateTaskStatus(String id, Map<String, String> input,
+    private Response updateTaskStatus(String id, Integer modificationCount, Map<String, String> input,
             Task.Status status) {
         var item = dao.findById(id);
-        if (item == null) {
+        if (item == null || item.getStatus() != Task.Status.CREATED) {
             return Response.status(NOT_FOUND).build();
         }
 
+        item.setModificationCount(modificationCount);
         item.setStatus(status);
         item.setCustomInput(input);
         dao.update(item);
