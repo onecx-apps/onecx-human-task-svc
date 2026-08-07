@@ -23,7 +23,7 @@ public interface TaskMapper {
     TaskSearchCriteria toTaskSearchCriteria(TaskSearchCriteriaDTO dto);
 
     @Mapping(target = "removeStreamItem", ignore = true)
-    TaskPageResultDTO map(PageResult<Task> page);
+    TaskPageResultDTO totaskPageResultDTO(PageResult<Task> page);
 
     List<TaskDTO> map(Stream<Task> stream);
 
