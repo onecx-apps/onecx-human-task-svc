@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: onecx-human-task adapter API V1
+  title: onecx-human-task adapter API
   description: Unified API implemented by provider adapters (eg. Camunda, n8n), invoked by the Human Task Service to accept or decline tasks in the provider workflow.
   version: 1.0.0
 
