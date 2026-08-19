@@ -13,7 +13,7 @@ import java.util.Map;
 
 import jakarta.ws.rs.HttpMethod;
 
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.mockserver.client.MockServerClient;
 import org.mockserver.model.HttpRequest;
@@ -31,22 +31,20 @@ import io.quarkus.test.junit.QuarkusTest;
 @QuarkusTest
 @TestHTTPEndpoint(TaskRestControllerInternal.class)
 @WithDBData(value = "data/test-internal.xml", deleteBeforeInsert = true, deleteAfterTest = true, rinseAndRepeat = true)
-@GenerateKeycloakClient(clientName = "testClient", scopes = { "ocx-ht:all", "ocx-ht:read", "ocx-ht:write", "ocx-ht:delete" })
+@GenerateKeycloakClient(clientName = "testClient", scopes = { "ocx-ht:all", "ocx-ht:read", "ocx-ht:write",
+        "ocx-ht:delete" })
 class TaskRestControllerInternalTest extends AbstractTest {
 
     private static final String TENANT = "org1";
+    private static final String ADAPTER_ACCEPT_PATH = "/v1/tasks/accept";
+    private static final String ADAPTER_DECLINE_PATH = "/v1/tasks/decline";
 
     @InjectMockServerClient
     MockServerClient mockServerClient;
 
-    @BeforeEach
-    void registerDefaultAdapterMocks() {
-        mockServerClient
-                .when(HttpRequest.request().withPath("/v1/tasks/accept").withMethod(HttpMethod.POST))
-                .respond(HttpResponse.response().withStatusCode(NO_CONTENT.getStatusCode()));
-        mockServerClient
-                .when(HttpRequest.request().withPath("/v1/tasks/decline").withMethod(HttpMethod.POST))
-                .respond(HttpResponse.response().withStatusCode(NO_CONTENT.getStatusCode()));
+    @AfterEach
+    void clearMocks() {
+        mockServerClient.clear(HttpRequest.request());
     }
 
     @Test
@@ -106,6 +104,10 @@ class TaskRestControllerInternalTest extends AbstractTest {
 
     @Test
     void acceptTask_shouldUpdateStatusAndInput() {
+        mockServerClient
+                .when(HttpRequest.request().withPath(ADAPTER_ACCEPT_PATH).withMethod(HttpMethod.POST))
+                .respond(HttpResponse.response().withStatusCode(NO_CONTENT.getStatusCode()));
+
         var request = new AcceptTaskRequestDTO(0);
         request.setInput(Map.of("k1", "v1"));
 
@@ -161,6 +163,10 @@ class TaskRestControllerInternalTest extends AbstractTest {
 
     @Test
     void acceptTask_shouldReturn400_whenModificationCountIsStale() {
+        mockServerClient
+                .when(HttpRequest.request().withPath(ADAPTER_ACCEPT_PATH).withMethod(HttpMethod.POST))
+                .respond(HttpResponse.response().withStatusCode(NO_CONTENT.getStatusCode()));
+
         var exception = given()
                 .auth().oauth2(getKeycloakClientToken("testClient"))
                 .header(APM_HEADER_PARAM, createToken(TENANT))
@@ -189,7 +195,94 @@ class TaskRestControllerInternalTest extends AbstractTest {
     }
 
     @Test
+    void acceptTask_shouldNotPersist_whenAdapterReturns400() {
+        mockServerClient
+                .when(HttpRequest.request().withPath(ADAPTER_ACCEPT_PATH).withMethod(HttpMethod.POST))
+
+                .respond(HttpResponse.response().withStatusCode(BAD_REQUEST.getStatusCode()));
+
+        var request = new AcceptTaskRequestDTO(0);
+        request.setInput(Map.of("k1", "v1"));
+
+        given()
+                .auth().oauth2(getKeycloakClientToken("testClient"))
+                .header(APM_HEADER_PARAM, createToken(TENANT))
+                .contentType(APPLICATION_JSON)
+                .body(request)
+                .post("/{id}/accept", "11-111")
+                .then()
+                .statusCode(BAD_REQUEST.getStatusCode());
+
+        var updated = given()
+                .auth().oauth2(getKeycloakClientToken("testClient"))
+                .header(APM_HEADER_PARAM, createToken(TENANT))
+                .contentType(APPLICATION_JSON)
+                .get("/{id}", "11-111")
+                .then()
+                .statusCode(OK.getStatusCode())
+                .extract()
+                .as(TaskDTO.class);
+
+        assertThat(updated.getStatus()).isEqualTo(TaskStatusDTO.CREATED);
+    }
+
+    @Test
+    void acceptTask_shouldNotPersist_whenAdapterReturns200() {
+        mockServerClient
+                .when(HttpRequest.request().withPath(ADAPTER_ACCEPT_PATH).withMethod(HttpMethod.POST))
+
+                .respond(HttpResponse.response().withStatusCode(OK.getStatusCode()));
+
+        var request = new AcceptTaskRequestDTO(0);
+        request.setInput(Map.of("k1", "v1"));
+
+        given()
+                .auth().oauth2(getKeycloakClientToken("testClient"))
+                .header(APM_HEADER_PARAM, createToken(TENANT))
+                .contentType(APPLICATION_JSON)
+                .body(request)
+                .post("/{id}/accept", "11-111")
+                .then()
+                .statusCode(OK.getStatusCode());
+
+        var updated = given()
+                .auth().oauth2(getKeycloakClientToken("testClient"))
+                .header(APM_HEADER_PARAM, createToken(TENANT))
+                .contentType(APPLICATION_JSON)
+                .get("/{id}", "11-111")
+                .then()
+                .statusCode(OK.getStatusCode())
+                .extract()
+                .as(TaskDTO.class);
+
+        assertThat(updated.getStatus()).isEqualTo(TaskStatusDTO.CREATED);
+    }
+
+    @Test
+    void acceptTask_shouldReturn400_whenNoAdapterClient() {
+        var request = new AcceptTaskRequestDTO(0);
+        request.setInput(Map.of("k1", "v1"));
+
+        var response = given()
+                .auth().oauth2(getKeycloakClientToken("testClient"))
+                .header(APM_HEADER_PARAM, createToken(TENANT))
+                .contentType(APPLICATION_JSON)
+                .body(request)
+                .post("/{id}/accept", "33-333")
+                .then()
+                .statusCode(BAD_REQUEST.getStatusCode())
+                .extract()
+                .as(ProblemDetailResponseDTO.class);
+
+        assertThat(response.getErrorCode()).isEqualTo("INVALID_PROVIDER");
+    }
+
+    @Test
     void declineTask_shouldUpdateStatusAndInput() {
+        mockServerClient
+                .when(HttpRequest.request().withPath(ADAPTER_DECLINE_PATH).withMethod(HttpMethod.POST))
+                .respond(HttpResponse.response().withStatusCode(NO_CONTENT.getStatusCode()));
+
         var request = new DeclineTaskRequestDTO(0);
         request.setInput(Map.of("reason", "no"));
 
@@ -218,6 +311,10 @@ class TaskRestControllerInternalTest extends AbstractTest {
 
     @Test
     void declineTask_afterAccept_shouldReturn404() {
+        mockServerClient
+                .when(HttpRequest.request().withPath(ADAPTER_ACCEPT_PATH).withMethod(HttpMethod.POST))
+                .respond(HttpResponse.response().withStatusCode(NO_CONTENT.getStatusCode()));
+
         given()
                 .auth().oauth2(getKeycloakClientToken("testClient"))
                 .header(APM_HEADER_PARAM, createToken(TENANT))
@@ -262,6 +359,70 @@ class TaskRestControllerInternalTest extends AbstractTest {
                 .post("/{id}/decline", "22-222")
                 .then()
                 .statusCode(NOT_FOUND.getStatusCode());
+    }
+
+    @Test
+    void declineTask_shouldNotPersist_whenAdapterReturns200() {
+        mockServerClient
+                .when(HttpRequest.request().withPath(ADAPTER_DECLINE_PATH).withMethod(HttpMethod.POST))
+
+                .respond(HttpResponse.response().withStatusCode(OK.getStatusCode()));
+
+        var request = new DeclineTaskRequestDTO(0);
+        request.setInput(Map.of("reason", "no"));
+
+        given()
+                .auth().oauth2(getKeycloakClientToken("testClient"))
+                .header(APM_HEADER_PARAM, createToken(TENANT))
+                .contentType(APPLICATION_JSON)
+                .body(request)
+                .post("/{id}/decline", "11-111")
+                .then()
+                .statusCode(OK.getStatusCode());
+
+        var updated = given()
+                .auth().oauth2(getKeycloakClientToken("testClient"))
+                .header(APM_HEADER_PARAM, createToken(TENANT))
+                .contentType(APPLICATION_JSON)
+                .get("/{id}", "11-111")
+                .then()
+                .statusCode(OK.getStatusCode())
+                .extract()
+                .as(TaskDTO.class);
+
+        assertThat(updated.getStatus()).isEqualTo(TaskStatusDTO.CREATED);
+    }
+
+    @Test
+    void declineTask_shouldNotPersist_whenAdapterReturns400() {
+        mockServerClient
+                .when(HttpRequest.request().withPath(ADAPTER_DECLINE_PATH).withMethod(HttpMethod.POST))
+
+                .respond(HttpResponse.response().withStatusCode(BAD_REQUEST.getStatusCode()));
+
+        var request = new DeclineTaskRequestDTO(0);
+        request.setInput(Map.of("reason", "no"));
+
+        given()
+                .auth().oauth2(getKeycloakClientToken("testClient"))
+                .header(APM_HEADER_PARAM, createToken(TENANT))
+                .contentType(APPLICATION_JSON)
+                .body(request)
+                .post("/{id}/decline", "11-111")
+                .then()
+                .statusCode(BAD_REQUEST.getStatusCode());
+
+        var updated = given()
+                .auth().oauth2(getKeycloakClientToken("testClient"))
+                .header(APM_HEADER_PARAM, createToken(TENANT))
+                .contentType(APPLICATION_JSON)
+                .get("/{id}", "11-111")
+                .then()
+                .statusCode(OK.getStatusCode())
+                .extract()
+                .as(TaskDTO.class);
+
+        assertThat(updated.getStatus()).isEqualTo(TaskStatusDTO.CREATED);
     }
 
     @Test
