@@ -11,13 +11,20 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.List;
 import java.util.Map;
 
+import jakarta.ws.rs.HttpMethod;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockserver.client.MockServerClient;
+import org.mockserver.model.HttpRequest;
+import org.mockserver.model.HttpResponse;
 import org.tkit.onecx.human.task.rs.internal.mappers.ExceptionMapper;
 import org.tkit.onecx.human.task.test.AbstractTest;
 import org.tkit.quarkus.security.test.GenerateKeycloakClient;
 import org.tkit.quarkus.test.WithDBData;
 
 import gen.org.tkit.onecx.human.task.rs.internal.model.*;
+import io.quarkiverse.mockserver.test.InjectMockServerClient;
 import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
 
@@ -28,6 +35,19 @@ import io.quarkus.test.junit.QuarkusTest;
 class TaskRestControllerInternalTest extends AbstractTest {
 
     private static final String TENANT = "org1";
+
+    @InjectMockServerClient
+    MockServerClient mockServerClient;
+
+    @BeforeEach
+    void registerDefaultAdapterMocks() {
+        mockServerClient
+                .when(HttpRequest.request().withPath("/v1/tasks/accept").withMethod(HttpMethod.POST))
+                .respond(HttpResponse.response().withStatusCode(NO_CONTENT.getStatusCode()));
+        mockServerClient
+                .when(HttpRequest.request().withPath("/v1/tasks/decline").withMethod(HttpMethod.POST))
+                .respond(HttpResponse.response().withStatusCode(NO_CONTENT.getStatusCode()));
+    }
 
     @Test
     void getTaskById_shouldReturnTask() {

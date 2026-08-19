@@ -9,6 +9,7 @@ import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Path;
 import jakarta.ws.rs.core.Response;
 
+import org.jboss.resteasy.reactive.ClientWebApplicationException;
 import org.jboss.resteasy.reactive.RestResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -31,6 +32,16 @@ public interface ExceptionMapper {
         return RestResponse.status(Response.Status.BAD_REQUEST, dto);
     }
 
+    default Response clientException(ClientWebApplicationException ex) {
+        if (ex.getResponse().getStatus() == 500) {
+            return Response.status(400).build();
+        } else if (ex.getResponse().getStatus() == 404) {
+            return Response.status(404).build();
+        } else {
+            return Response.status(ex.getResponse().getStatus()).build();
+        }
+    }
+
     @Mapping(target = "removeParamsItem", ignore = true)
     @Mapping(target = "params", ignore = true)
     @Mapping(target = "invalidParams", ignore = true)
@@ -50,5 +61,6 @@ public interface ExceptionMapper {
     enum ErrorKeys {
         CONSTRAINT_VIOLATIONS,
         OPTIMISTIC_LOCK,
+        INVALID_PROVIDER,
     }
 }

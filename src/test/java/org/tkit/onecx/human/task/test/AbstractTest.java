@@ -15,13 +15,18 @@ import org.eclipse.microprofile.jwt.Claims;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
+import io.quarkiverse.mockserver.test.MockServerTestResource;
+import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.keycloak.client.KeycloakTestClient;
 import io.restassured.config.RestAssuredConfig;
 import io.smallrye.jwt.build.Jwt;
 import io.smallrye.jwt.util.KeyUtils;
 
+@QuarkusTestResource(MockServerTestResource.class)
 @SuppressWarnings("java:S2187")
 public class AbstractTest {
+
+    protected static final String MOCK_ID = "MOCK";
 
     protected static final String APM_HEADER_PARAM = ConfigProvider.getConfig()
             .getValue("%test.tkit.rs.context.token.header-param", String.class);

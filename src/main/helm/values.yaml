@@ -10,7 +10,7 @@ app:
         enabled: true
         spec:
           kcConfig:
-            defaultClientScopes: [ ocx-ht:read ]
+            defaultClientScopes: [ ocx-ht:read, ocx-ht:write ]
     microservice:
       spec:
         description: "OneCX Human Task backend service"
