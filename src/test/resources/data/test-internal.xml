@@ -4,4 +4,6 @@
           provider_type="N8N" provider_url="https://N8N/task-1" status="CREATED" tenant_id="org1"/>
     <TASK guid="22-222" optlock="0" title="Internal Task task-2" description="desc task-2" provider_task_id="task-2"
           provider_type="CAMUNDA" provider_url="https://CAMUNDA/task-2" status="ACCEPTED" tenant_id="org1"/>
+    <TASK guid="33-333" optlock="0" title="Internal Task task-3" description="desc task-3" provider_task_id="task-3"
+          provider_type="UNKNOWN" provider_url="https://UNKNOWN/task-3" status="CREATED" tenant_id="org1"/>
 </dataset>

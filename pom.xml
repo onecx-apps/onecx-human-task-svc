@@ -105,6 +105,18 @@
             <artifactId>quarkus-rest-client-oidc-filter</artifactId>
         </dependency>
 
+        <!-- MockServer -->
+        <dependency>
+            <groupId>io.quarkiverse.mockserver</groupId>
+            <artifactId>quarkus-mockserver</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkiverse.mockserver</groupId>
+            <artifactId>quarkus-mockserver-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
         <!-- Mapping -->
         <dependency>
             <groupId>org.projectlombok</groupId>
