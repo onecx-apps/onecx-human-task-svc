@@ -34,7 +34,7 @@ public class AdapterClientService {
         var result = new HashMap<String, String>();
         urls.forEach((providerType, url) -> {
             if (url != null && !url.isBlank()) {
-                result.put(providerType, url);
+                result.put(providerType.toUpperCase(), url);
             }
         });
         return result;
