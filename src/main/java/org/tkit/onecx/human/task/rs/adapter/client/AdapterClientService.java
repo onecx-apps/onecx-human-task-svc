@@ -19,7 +19,7 @@ import io.quarkus.runtime.StartupEvent;
 public class AdapterClientService {
 
     @Inject
-    @ConfigProperty(name = "adapter.urls", defaultValue = "")
+    @ConfigProperty(name = "adapter.urls")
     Map<String, String> adapterUrls;
 
     private final Map<String, TasksAdapterClient> clients = new HashMap<>();
