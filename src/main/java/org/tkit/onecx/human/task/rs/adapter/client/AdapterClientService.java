@@ -12,6 +12,7 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.RestClientBuilder;
 import org.tkit.quarkus.log.cdi.LogService;
 
+import io.quarkus.oidc.client.OidcClient;
 import io.quarkus.runtime.StartupEvent;
 
 @LogService
@@ -22,10 +23,14 @@ public class AdapterClientService {
     @ConfigProperty(name = "adapter.urls")
     Map<String, String> adapterUrls;
 
+    @Inject
+    OidcClient oidcClient;
+
     private final Map<String, TasksAdapterClient> clients = new HashMap<>();
 
     void onStart(@Observes StartupEvent ev) {
         filterValidUrls(adapterUrls).forEach((providerType, url) -> clients.put(providerType, RestClientBuilder.newBuilder()
+                .register(new AdapterAuthFilter(oidcClient))
                 .baseUri(UriBuilder.fromUri(url).build())
                 .build(TasksAdapterClient.class)));
     }
