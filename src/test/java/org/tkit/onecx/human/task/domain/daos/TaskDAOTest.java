@@ -114,6 +114,22 @@ class TaskDAOTest {
 
     @Test
     @Transactional
+    void findTasksByCriteria_emptyStatuses_shouldIgnoreStatusFilter() {
+        taskDAO.create(task("1", "Title1", Task.Status.CREATED, "N8N"));
+        taskDAO.create(task("2", "Title2", Task.Status.ACCEPTED, "CAMUNDA"));
+
+        var criteria = new TaskSearchCriteria();
+        criteria.setStatuses(List.of());
+        criteria.setPageNumber(0);
+        criteria.setPageSize(10);
+
+        var result = taskDAO.findTasksByCriteria(criteria);
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(2, result.getTotalElements());
+    }
+
+    @Test
+    @Transactional
     void findTasksByCriteria_withPagination() {
         taskDAO.create(task("1", "Title2", Task.Status.CREATED, "N8N"));
         taskDAO.create(task("2", "Title2", Task.Status.CREATED, "N8N"));
