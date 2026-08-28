@@ -1,33 +1,36 @@
 package org.tkit.onecx.human.task.rs.adapter.client;
 
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.core.UriBuilder;
 
-import org.eclipse.microprofile.config.inject.ConfigProperty;
-import org.eclipse.microprofile.rest.client.RestClientBuilder;
 import org.tkit.quarkus.log.cdi.LogService;
 
-import io.quarkus.runtime.StartupEvent;
+import io.quarkus.oidc.client.reactive.filter.OidcClientRequestReactiveFilter;
+import io.quarkus.rest.client.reactive.QuarkusRestClientBuilder;
+import io.quarkus.runtime.Startup;
 
+@Startup
 @LogService
 @ApplicationScoped
 public class AdapterClientService {
 
     @Inject
-    @ConfigProperty(name = "adapter.urls")
-    Map<String, String> adapterUrls;
+    AdapterConfig config;
 
     private final Map<String, TasksAdapterClient> clients = new HashMap<>();
 
-    void onStart(@Observes StartupEvent ev) {
-        filterValidUrls(adapterUrls).forEach((providerType, url) -> clients.put(providerType, RestClientBuilder.newBuilder()
-                .baseUri(UriBuilder.fromUri(url).build())
-                .build(TasksAdapterClient.class)));
+    @PostConstruct
+    void init() {
+        filterValidUrls(config.urls()).forEach((providerType, url) -> clients.put(providerType,
+                QuarkusRestClientBuilder.newBuilder()
+                        .baseUri(URI.create(url))
+                        .register(OidcClientRequestReactiveFilter.class)
+                        .build(TasksAdapterClient.class)));
     }
 
     static Map<String, String> filterValidUrls(Map<String, String> urls) {
