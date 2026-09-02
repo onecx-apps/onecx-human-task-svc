@@ -19,4 +19,5 @@ jobs:
   build:
     uses: onecx-apps/ci-quarkus/.github/workflows/build.yml@v3
     secrets: inherit
-    helmEventTargetRepository: onecx-apps/onecx-human-task
+    with:
+      helmEventTargetRepository: onecx-apps/onecx-human-task
