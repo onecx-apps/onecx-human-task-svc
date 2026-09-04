@@ -1,5 +1,6 @@
 package org.tkit.onecx.human.task.rs.external.v1.mappers;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -28,7 +29,7 @@ public interface TasksMapperV1 {
 
     default Map<String, String> mapCustomInput(List<String> customInput) {
         if (customInput == null) {
-            return null;
+            return Collections.emptyMap();
         }
         return customInput.stream().collect(Collectors.toMap(k -> k, k -> "", (a, b) -> a));
     }
