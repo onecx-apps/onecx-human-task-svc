@@ -76,6 +76,11 @@ components:
           type: string
           maxLength: 255
           description: URL used to later accept or decline the task via the provider adapter.
+        customInput:
+          type: array
+          items:
+            type: string
+          description: Optional arbitrary keys provided by the provider during task creation.
 
     ProviderType:
       type: string
