@@ -1,5 +1,10 @@
 package org.tkit.onecx.human.task.rs.external.v1.mappers;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.tkit.onecx.human.task.domain.models.Task;
@@ -20,7 +25,13 @@ public interface TasksMapperV1 {
     @Mapping(target = "persisted", ignore = true)
     @Mapping(target = "tenantId", ignore = true)
     @Mapping(target = "status", constant = "CREATED")
-    @Mapping(target = "customInput", ignore = true)
     Task toTask(CreateTaskRequestDTOV1 dto);
+
+    default Map<String, String> mapCustomInput(List<String> customInput) {
+        if (customInput == null) {
+            return Collections.emptyMap();
+        }
+        return customInput.stream().collect(Collectors.toMap(k -> k, k -> "", (a, b) -> a));
+    }
 
 }
