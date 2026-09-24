@@ -30,7 +30,7 @@ public class Task extends TraceableEntity {
     @Column(name = "TITLE")
     private String title;
 
-    @Column(name = "DESCRIPTION")
+    @Column(name = "DESCRIPTION", length = 512)
     private String description;
 
     @Enumerated(EnumType.STRING)

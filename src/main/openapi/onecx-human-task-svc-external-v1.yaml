@@ -64,7 +64,7 @@ components:
           description: The title of the task.
         description:
           type: string
-          maxLength: 255
+          maxLength: 512
           description: The description of the task.
         providerType:
           $ref: '#/components/schemas/ProviderType'
