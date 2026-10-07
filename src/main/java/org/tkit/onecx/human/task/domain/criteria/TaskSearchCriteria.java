@@ -4,11 +4,13 @@ import java.util.List;
 
 import org.tkit.onecx.human.task.domain.models.Task;
 
+import io.quarkus.runtime.annotations.RegisterForReflection;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
+@RegisterForReflection
 public class TaskSearchCriteria {
 
     private String title;
