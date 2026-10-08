@@ -12,7 +12,7 @@
     <artifactId>onecx-human-task-svc</artifactId>
     <version>999-SNAPSHOT</version>
     <packaging>quarkus</packaging>
-    
+
     <name>onecx-human-task-svc</name>
     <description>OneCX Human Task Backend Service</description>
 
@@ -21,6 +21,10 @@
         <dependency>
             <groupId>org.tkit.quarkus.lib</groupId>
             <artifactId>tkit-quarkus-jpa-tenant</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.tkit.onecx.quarkus</groupId>
+            <artifactId>onecx-core</artifactId>
         </dependency>
         <dependency>
             <groupId>org.tkit.onecx.quarkus</groupId>
