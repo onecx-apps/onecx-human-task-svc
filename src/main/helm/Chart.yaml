@@ -1,12 +1,10 @@
 apiVersion: v2
 name: onecx-human-task-svc
-type: application
 version: 0.0.0
 appVersion: 0.0.0
-description: onecx-human-task-svc
+description: Onecx human task service
 keywords:
-  - adapter
-  - n8n
+  - human-task
 sources:
   - https://github.com/onecx-apps/onecx-human-task-svc
 maintainers:
@@ -15,5 +13,5 @@ maintainers:
 dependencies:
   - name: helm-quarkus-app
     alias: app
-    version: 0.42.0
+    version: 0.43.0
     repository: oci://ghcr.io/onecx/charts
