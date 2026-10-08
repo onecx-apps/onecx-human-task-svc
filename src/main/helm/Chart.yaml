@@ -8,7 +8,7 @@ keywords:
   - adapter
   - n8n
 sources:
-  - https://github.com/onecx/onecx-human-task-svc
+  - https://github.com/onecx-apps/onecx-human-task-svc
 maintainers:
   - name: Tkit Developer
     email: tkit_dev@1000kit.org
