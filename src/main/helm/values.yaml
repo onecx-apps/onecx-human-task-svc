@@ -13,5 +13,5 @@ app:
             defaultClientScopes: [ ocx-ht:read, ocx-ht:write ]
     microservice:
       spec:
-        description: "OneCX Human Task backend service"
-        name: "onecx-human-task-svc"
+        description: OneCX Human Task Backend Service
+        name: OneCX Human Task SVC
