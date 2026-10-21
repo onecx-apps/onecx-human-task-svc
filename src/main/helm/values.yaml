@@ -2,6 +2,8 @@ app:
   name: svc
   image:
     repository: "onecx/onecx-human-task-svc"
+  env:
+    - name: ADAPTER_URLS_N8N
   db:
     enabled: true
   operator:
