@@ -1,6 +1,7 @@
 package org.tkit.onecx.human.task.rs.adapter.client;
 
 import java.util.Map;
+import java.util.Optional;
 
 import io.quarkus.runtime.annotations.ConfigDocFilename;
 import io.quarkus.runtime.annotations.ConfigPhase;
@@ -15,5 +16,5 @@ public interface AdapterConfig {
     /**
      * Adapter urls per provider type (e.g. adapter.urls.CAMUNDA).
      */
-    Map<String, String> urls();
+    Map<String, Optional<String>> urls();
 }
