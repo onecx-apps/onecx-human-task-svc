@@ -3,6 +3,7 @@ package org.tkit.onecx.human.task.rs.adapter.client;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.HashMap;
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 
@@ -13,13 +14,13 @@ class AdapterClientServiceTest {
 
     @Test
     void filterValidUrls_shouldSkipNullAndBlankUrls() {
-        var urls = new HashMap<String, String>();
-        urls.put("VALID", "http://localhost:1");
-        urls.put("NULL_URL", null);
-        urls.put("BLANK_URL", "  ");
-        urls.put("EMPTY_URL", "");
+        var optionalUrls = new HashMap<String, Optional<String>>();
+        optionalUrls.put("VALID", Optional.of("http://localhost:1"));
+        optionalUrls.put("NULL_URL", Optional.empty());
+        optionalUrls.put("BLANK_URL", Optional.of("  "));
+        optionalUrls.put("EMPTY_URL", Optional.of(""));
 
-        var result = AdapterClientService.filterValidUrls(urls);
+        var result = AdapterClientService.filterValidUrls(optionalUrls);
 
         assertThat(result)
                 .containsEntry("VALID", "http://localhost:1")
@@ -30,9 +31,9 @@ class AdapterClientServiceTest {
 
     @Test
     void filterValidUrls_shouldReturnEmptyMap_whenAllInvalid() {
-        var urls = new HashMap<String, String>();
-        urls.put("NULL_URL", null);
-        urls.put("BLANK_URL", "  ");
+        var urls = new HashMap<String, Optional<String>>();
+        urls.put("NULL_URL", Optional.empty());
+        urls.put("BLANK_URL", Optional.of("  "));
 
         var result = AdapterClientService.filterValidUrls(urls);
 

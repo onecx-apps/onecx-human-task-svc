@@ -4,6 +4,7 @@ app:
     repository: "onecx/onecx-human-task-svc"
   env:
     - name: ADAPTER_URLS_N8N
+    - name: ADAPTER_URLS_CAMUNDA
   db:
     enabled: true
   operator:

@@ -3,6 +3,7 @@ package org.tkit.onecx.human.task.rs.adapter.client;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -33,13 +34,11 @@ public class AdapterClientService {
                         .build(TasksAdapterClient.class)));
     }
 
-    static Map<String, String> filterValidUrls(Map<String, String> urls) {
+    static Map<String, String> filterValidUrls(Map<String, Optional<String>> urls) {
         var result = new HashMap<String, String>();
-        urls.forEach((providerType, url) -> {
-            if (url != null && !url.isBlank()) {
-                result.put(providerType.toUpperCase(), url);
-            }
-        });
+        urls.forEach((providerType, url) -> url
+                .filter(value -> !value.isBlank())
+                .ifPresent(value -> result.put(providerType.toUpperCase(), value)));
         return result;
     }
 
