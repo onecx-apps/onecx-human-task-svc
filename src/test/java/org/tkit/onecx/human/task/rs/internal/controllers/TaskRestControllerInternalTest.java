@@ -104,8 +104,12 @@ class TaskRestControllerInternalTest extends AbstractTest {
 
     @Test
     void acceptTask_shouldUpdateStatusAndInput() {
+        String apmPrincipalToken = createToken(TENANT);
         mockServerClient
-                .when(HttpRequest.request().withPath(ADAPTER_ACCEPT_PATH).withMethod(HttpMethod.POST))
+                .when(HttpRequest.request()
+                        .withPath(ADAPTER_ACCEPT_PATH)
+                        .withMethod(HttpMethod.POST)
+                        .withHeader(APM_HEADER_PARAM, apmPrincipalToken))
                 .respond(HttpResponse.response().withStatusCode(NO_CONTENT.getStatusCode()));
 
         var request = new AcceptTaskRequestDTO(0);
@@ -113,7 +117,7 @@ class TaskRestControllerInternalTest extends AbstractTest {
 
         given()
                 .auth().oauth2(getKeycloakClientToken("testClient"))
-                .header(APM_HEADER_PARAM, createToken(TENANT))
+                .header(APM_HEADER_PARAM, apmPrincipalToken)
                 .contentType(APPLICATION_JSON)
                 .body(request)
                 .post("/{id}/accept", "11-111")
